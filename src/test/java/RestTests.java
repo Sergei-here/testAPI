@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.List;
 
@@ -324,6 +325,26 @@ public class RestTests {
 
         System.out.println("12. testTopStudentMaxAll: get /topStudent код 200 и несколько студентов, если у них всех эта оценка максимальная и при этом они равны по количеству оценок.");
         System.out.println(responseBody);
+    }
+
+    @Test
+    public void test201NegativeMarks() throws JsonProcessingException {
+
+        Integer id = 2;
+        String name = "Катя";
+        List<Integer> marks = Arrays.asList(-1, -3, -4);
+
+        Student studentToCreate = new Student(id, name, marks);
+        String studentJson = objectMapper.writeValueAsString(studentToCreate);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(studentJson)
+                .when()
+                .post("/student")
+                .then()
+                .statusCode(400);
+        System.out.println("13. Не выполняется условие: оценка не может быть отрицательной ");
     }
 }
 /*
