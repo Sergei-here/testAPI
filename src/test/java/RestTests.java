@@ -40,6 +40,9 @@ public class RestTests {
 
     @Test
     public void test200() throws JsonProcessingException {
+
+        cleanupTestStudents();
+
         // Создаём студента для теста
         Integer id1 = 2;
         String name = "Иван";
@@ -80,6 +83,8 @@ public class RestTests {
     @Test
     public void test404() {
 
+        cleanupTestStudents();
+
         Integer id = 9999;
 
         given()
@@ -93,6 +98,8 @@ public class RestTests {
 
     @Test
     public void test201() throws JsonProcessingException {
+
+        cleanupTestStudents();
 
         Integer id = 2;
         String name = "Катя";
@@ -113,8 +120,29 @@ public class RestTests {
 
     @Test
     public void test201Update() throws JsonProcessingException {
-        Integer id = 2;
-        String name = "Иван";
+
+        cleanupTestStudents();
+
+        // Создаём студента для теста
+        Integer id1 = 1;
+        String name1 = "Иван";
+        List<Integer> marks1 = Arrays.asList(2, 3, 4);
+
+        Student studentToCreate = new Student(id1, name1, marks1);
+        String studentJson1 = objectMapper.writeValueAsString(studentToCreate);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(studentJson1)
+                .when()
+                .post("/student")
+                .then()
+                .statusCode(201);
+        System.out.println("4. test201Update");
+        System.out.println("Создан " + studentToCreate);
+
+        Integer id = 1;
+        String name = "Карл";
         List<Integer> marks = Arrays.asList(2, 5, 3);
 
         Student studentToUpdate = new Student(id, name, marks);
@@ -127,11 +155,13 @@ public class RestTests {
                 .post("/student")
                 .then()
                 .statusCode(201);
-        System.out.println("4. test201Update: Обновлён " + studentToUpdate);
+        System.out.println("Обновлён " + studentToUpdate);
     }
 
     @Test
     public void test201IdNull() throws JsonProcessingException {
+
+        cleanupTestStudents();
 
         Integer id = null;
         String name = "Катя";
@@ -169,6 +199,10 @@ public class RestTests {
 
     @Test
     public void test200Delete() throws JsonProcessingException {
+
+        cleanupTestStudents();
+
+        // создаём студента для теста
         Integer id = 2;
         String name = "Катя";
         List<Integer> marks = Arrays.asList(2, 3, 4);
@@ -213,7 +247,7 @@ public class RestTests {
 
     @Test
     public void test200BodyEmpty() {
-        // очищаем студентов перед тестом
+
         cleanupTestStudents();
 
         Response response = given()
@@ -232,6 +266,7 @@ public class RestTests {
 
     // Вспомогательный метод для создания студента без оценок
     private void createStudentWithoutMarks(Integer id, String name) throws JsonProcessingException {
+
         Student student = new Student(id, name, Arrays.asList());
         String json = objectMapper.writeValueAsString(student);
 
@@ -246,7 +281,7 @@ public class RestTests {
 
     @Test
     public void test200WithoutMarks() throws JsonProcessingException {
-        // очищаем студентов перед тестом
+
         cleanupTestStudents();
 
         // создаём студента без оценок
@@ -270,6 +305,7 @@ public class RestTests {
 
     // Вспомогательный метод для создания студента
     private void createStudent(Integer id, String name, List<Integer> marks) throws JsonProcessingException {
+
         Student student = new Student(id, name, marks);
         String json = objectMapper.writeValueAsString(student);
 
